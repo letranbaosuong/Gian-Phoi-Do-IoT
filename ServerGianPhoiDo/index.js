@@ -8,7 +8,7 @@ var mysql = require('mysql')
 
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
 
 var esp8266_nsp = io.of('/esp8266')				//namespace của esp8266
 

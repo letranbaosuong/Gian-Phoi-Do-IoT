@@ -25,10 +25,11 @@ int congTacHanhTrinh2 = 8;
 int valueCongTac2;
 int valueCongTac1;
 
-const unsigned long CHU_KY_1_LA_BAO_NHIEU = 2000UL; //Cứ sau 2000ms = 2s thì chu kỳ lặp lại
+const unsigned long CHU_KY_1_LA_BAO_NHIEU = 200UL; //Cứ sau 2000ms = 2s thì chu kỳ lặp lại
 unsigned long chuky1 = 0;
 int kt_lenh_dkDC = -1;
 boolean lenh_allowDKDC = false;
+String chuoi_lenh_dkDC;
 int valueRainSensor = digitalRead(rainSensor);
 
 String inputString = "";         // a String to hold incoming data
@@ -87,16 +88,43 @@ void GuiTrangThaiDC(int valueRainSensor, int valueCongTac1, int valueCongTac2) {
   root["valueRainSensor"] = valueRainSensor;
   root["valueCongTac1"] = valueCongTac1;
   root["valueCongTac2"] = valueCongTac2;
+  root["voice"] = 0;
 
   //Gửi đi hoy!
   //in ra cổng software serial để ESP8266 nhận
   mySerial.print("STATUSDC");   //gửi tên lệnh
+  sCmd.readSerial();
   mySerial.print('\r');           // gửi \r
+  sCmd.readSerial();
   root.printTo(mySerial);        //gửi chuỗi JSON
+  sCmd.readSerial();
   mySerial.print('\r');
+  sCmd.readSerial();
+}
+
+void GuiTrangThaiDCVoice(int valueRainSensor, int valueCongTac1, int valueCongTac2) {
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  //đọc giá trị cảm biến rồi in ra root
+  root["valueRainSensor"] = valueRainSensor;
+  root["valueCongTac1"] = valueCongTac1;
+  root["valueCongTac2"] = valueCongTac2;
+  root["voice"] = 1;
+
+  //Gửi đi hoy!
+  //in ra cổng software serial để ESP8266 nhận
+  mySerial.print("STATUSDC");   //gửi tên lệnh
+  sCmd.readSerial();
+  mySerial.print('\r');           // gửi \r
+  sCmd.readSerial();
+  root.printTo(mySerial);        //gửi chuỗi JSON
+  sCmd.readSerial();
+  mySerial.print('\r');
+  sCmd.readSerial();
 }
 
 void _GuiTrangThaiDC(){
+  sCmd.readSerial();
   valueRainSensor = digitalRead(rainSensor);
   valueCongTac1 = digitalRead(congTacHanhTrinh1);
   valueCongTac2 = digitalRead(congTacHanhTrinh2);
@@ -139,15 +167,9 @@ void HeThongTuDong(){
 //      GuiTrangThaiDC(0, 1, 0);
     }
   }
-  delay(1000);
 }
  
 void loop() {
-//  if (millis() - chuky1 > CHU_KY_1_LA_BAO_NHIEU) {
-//    chuky1 = millis();
-//
-//    
-//  }
   sCmd.readSerial();
   //Bạn không cần phải thêm bất kỳ dòng code nào trong hàm loop này cả
   if (lenh_allowDKDC == true){
@@ -157,11 +179,19 @@ void loop() {
       valueCongTac2 = digitalRead(congTacHanhTrinh2);
       if (kt_lenh_dkDC == 1 && valueCongTac1 == HIGH && valueCongTac2 == LOW){
         motor_1_Dung();
-        GuiTrangThaiDC(1, 1, 0);
+        if (chuoi_lenh_dkDC == "dayRa"){
+          GuiTrangThaiDC(1, 1, 0);
+        } else if (chuoi_lenh_dkDC == "dayRaVoice"){
+          GuiTrangThaiDCVoice(1, 1, 0);
+        }
         kt_lenh_dkDC = -1;
       } else if (kt_lenh_dkDC == 0 && valueCongTac1 == LOW && valueCongTac2 == HIGH){
         motor_1_Dung();
-        GuiTrangThaiDC(0, 0, 1);
+        if (chuoi_lenh_dkDC == "thuVao"){
+          GuiTrangThaiDC(0, 0, 1);
+        } else if (chuoi_lenh_dkDC == "thuVaoVoice"){
+          GuiTrangThaiDCVoice(0, 0, 1);
+        }
         kt_lenh_dkDC = -1;
       }
       if (lenh_allowDKDC == false){
@@ -171,7 +201,11 @@ void loop() {
   } else if (lenh_allowDKDC == false){
     while (1){
       sCmd.readSerial();
-      HeThongTuDong();
+      if (millis() - chuky1 > CHU_KY_1_LA_BAO_NHIEU) {
+        chuky1 = millis();
+    
+        HeThongTuDong();
+      }
       if (lenh_allowDKDC == true){
         break;
       }
@@ -204,12 +238,13 @@ void DKDC() {
   JsonObject& root = jsonBuffer.parseObject(json);//đặt một biến root mang kiểu json
  
   String lenh_dkDC = root["dieukhienDC"];
+  chuoi_lenh_dkDC = lenh_dkDC;
 //  Serial.println(lenh_dkDC);
-  if (lenh_dkDC == "dayRa"){ // het mua
+  if (lenh_dkDC == "dayRa" || lenh_dkDC == "dayRaVoice"){ // het mua
     motor_1_Tien(MAX_SPEED); // motor 1 tien
     kt_lenh_dkDC = 1;
     Serial.println(kt_lenh_dkDC);
-  } else if (lenh_dkDC == "thuVao"){ // dang mua
+  } else if (lenh_dkDC == "thuVao" || lenh_dkDC == "thuVaoVoice"){ // dang mua
     motor_1_Lui(MAX_SPEED); // motor 1 lui
     kt_lenh_dkDC = 0;
     Serial.println(kt_lenh_dkDC);
