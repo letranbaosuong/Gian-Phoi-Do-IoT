@@ -1,6 +1,7 @@
 package com.suong99.gianphoidoandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -8,19 +9,19 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
     private Socket mSocket;
     RadioButton rdThuVao;
     RadioButton rdDayRa;
-    ToggleButton tgBtnDieuKhien;
     TextView txtTrangThaiPhoiDo;
+    TextView txtDHT11;
     Switch switchDieuKhien;
+    Toolbar toolbarMain;
 
     {
         try {
@@ -50,12 +52,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         AnhXa();
         mSocket.connect();
         mSocket.on("server_gui_trang_thai_DC", JSON_STATUSDC);
+        mSocket.on("server_gui_DHT11", nhandataDHT11);
 
         rdDayRa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,17 +82,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tgBtnDieuKhien.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mSocket.emit("android_gui_Control", true);
-                } else {
-                    mSocket.emit("android_gui_Control", false);
-                }
-            }
-        });
-
         switchDieuKhien.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -92,14 +92,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        toolbarMain.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                if (item.getItemId() == R.id.menuBieuDo) {
+                    Intent ManHinhBieuDo = new Intent(MainActivity.this, BieuDoActivity.class);
+                    startActivity(ManHinhBieuDo);
+                }
+
+                return false;
+            }
+        });
+
     }
 
     private void AnhXa() {
         rdThuVao = findViewById(R.id.rdThuVao);
         rdDayRa = findViewById(R.id.rdDayRa);
-        tgBtnDieuKhien = findViewById(R.id.tgBtnDieuKhien);
         txtTrangThaiPhoiDo = findViewById(R.id.txtTrangThaiPhoiDo);
+        txtDHT11 = findViewById(R.id.txtDHT11);
         switchDieuKhien = findViewById(R.id.switchDieuKhien);
+        toolbarMain = findViewById(R.id.toolbarMain);
+        toolbarMain.inflateMenu(R.menu.menu);
     }
 
     private Emitter.Listener JSON_STATUSDC = new Emitter.Listener() {
@@ -140,6 +156,23 @@ public class MainActivity extends AppCompatActivity {
                             mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.laydo);
                             mediaPlayer.start();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener nhandataDHT11 = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    try {
+                        txtDHT11.setText("Nhiệt Độ: " + data.getString("Temperature") + "*C - Độ ẩm: " + data.getString("Humidity") + "%");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

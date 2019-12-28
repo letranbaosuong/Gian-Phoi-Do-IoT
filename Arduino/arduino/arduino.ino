@@ -5,7 +5,7 @@
 
 const byte RX = 13;          // Chân 3 được dùng làm chân RX
 const byte TX = 12;          // Chân 2 được dùng làm chân TX
-#define DHTPIN 3     // what digital pin we're connected to
+#define DHTPIN 10     // what digital pin we're connected to
 #define DHTTYPE DHT11   // DHT 11
 DHT dht(DHTPIN, DHTTYPE);
  
@@ -111,15 +111,20 @@ void GuiTrangThaiDCVoice(int valueRainSensor, int valueCongTac1, int valueCongTa
   root["valueCongTac2"] = valueCongTac2;
   root["voice"] = 1;
 
-  //Gửi đi hoy!
-  //in ra cổng software serial để ESP8266 nhận
-  mySerial.print("STATUSDC");   //gửi tên lệnh
-  sCmd.readSerial();
-  mySerial.print('\r');           // gửi \r
-  sCmd.readSerial();
-  root.printTo(mySerial);        //gửi chuỗi JSON
-  sCmd.readSerial();
-  mySerial.print('\r');
+  if (millis() - chuky1 > CHU_KY_1_LA_BAO_NHIEU) {
+    chuky1 = millis();
+
+    //Gửi đi hoy!
+    //in ra cổng software serial để ESP8266 nhận
+    mySerial.print("STATUSDC");   //gửi tên lệnh
+    sCmd.readSerial();
+    mySerial.print('\r');           // gửi \r
+    sCmd.readSerial();
+    root.printTo(mySerial);        //gửi chuỗi JSON
+    sCmd.readSerial();
+    mySerial.print('\r');
+    sCmd.readSerial();
+  }
   sCmd.readSerial();
 }
 
@@ -144,6 +149,7 @@ void HeThongTuDong(){
       sCmd.readSerial();
 //      _GuiTrangThaiDC();
       GuiTrangThaiDC(1, 1, 0);
+      delay(1000);
     } else {
       Serial.println("congTacHanhTrinh2 tat");
       sCmd.readSerial();
@@ -160,6 +166,7 @@ void HeThongTuDong(){
       sCmd.readSerial();
 //      _GuiTrangThaiDC();
       GuiTrangThaiDC(0, 0, 1);
+      delay(1000);
     } else {
       Serial.println("congTacHanhTrinh1 tat");
       sCmd.readSerial();
@@ -205,6 +212,11 @@ void loop() {
         chuky1 = millis();
     
         HeThongTuDong();
+      }
+      if (millis() - chuky1 > CHU_KY_1_LA_BAO_NHIEU) {
+        chuky1 = millis();
+    
+        dht11Sensor();
       }
       if (lenh_allowDKDC == true){
         break;

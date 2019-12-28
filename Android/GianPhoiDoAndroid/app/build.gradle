@@ -27,4 +27,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.github.nkzawa:socket.io-client:0.6.0'
+    implementation 'com.jjoe64:graphview:4.2.2'
+    implementation 'pl.pawelkleczkowski.customgauge:CustomGauge:1.0.4'
 }
