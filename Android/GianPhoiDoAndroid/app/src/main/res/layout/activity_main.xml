@@ -31,7 +31,7 @@
             android:layout_marginTop="30dp"
             android:text="Báo Cáo Môn Học"
             android:textColor="#C40808"
-            android:textSize="36sp"
+            android:textSize="40sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:text="Thu Vào"
                 android:textColor="#007080"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <RadioButton
                 android:id="@+id/rdDayRa"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:text="Đẩy Ra"
                 android:textColor="#007080"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
         </RadioGroup>
 
         <TextView
@@ -78,15 +78,15 @@
             android:id="@+id/switchDieuKhien"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:text="Điều Khiển     "
             android:textColor="#007E39"
-            android:textSize="28sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtDieuKhien" />
+            app:layout_constraintTop_toBottomOf="@+id/txtDoAmMain" />
 
         <TextView
             android:id="@+id/txtDHT11"
@@ -119,6 +119,28 @@
             app:rfab_shadow_dy="5dp"
             app:rfab_shadow_radius="7dp"
             app:rfab_size="normal" />
+
+        <TextView
+            android:id="@+id/txtNhietDoMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="34sp"
+            android:text="Nhiệt độ: 30*C"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDieuKhien" />
+
+        <TextView
+            android:id="@+id/txtDoAmMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="34sp"
+            android:text="Độ ẩm: 50%     "
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtNhietDoMain" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

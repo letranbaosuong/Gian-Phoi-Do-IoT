@@ -48,7 +48,7 @@ public class BieuDoActivity extends AppCompatActivity {
 
     {
         try {
-            mSocket = IO.socket("http://192.168.1.5:3000/");
+            mSocket = IO.socket("http://192.168.43.234:3000/");
 //            mSocket = IO.socket("https://gianphoidoonline.herokuapp.com/");
         } catch (URISyntaxException e) {
             System.out.println("Loi: '} catch (URISyntaxException e) {' + " + e.toString());

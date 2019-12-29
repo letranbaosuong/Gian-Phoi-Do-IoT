@@ -48,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
     Switch switchDieuKhien;
     Toolbar toolbarMain;
     RapidFloatingActionButton fabVoice;
+    TextView txtNhietDoMain;
+    TextView txtDoAmMain;
 
     {
         try {
-            mSocket = IO.socket("http://192.168.1.5:3000/");
+            mSocket = IO.socket("http://192.168.43.234:3000/");
 //            mSocket = IO.socket("https://gianphoidoonline.herokuapp.com/");
         } catch (URISyntaxException e) {
             System.out.println("Loi: '} catch (URISyntaxException e) {' + " + e.toString());
@@ -186,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
         toolbarMain = findViewById(R.id.toolbarMain);
         toolbarMain.inflateMenu(R.menu.menu);
         fabVoice = findViewById(R.id.fabVoice);
+        txtNhietDoMain = findViewById(R.id.txtNhietDoMain);
+        txtDoAmMain = findViewById(R.id.txtDoAmMain);
     }
 
     private Emitter.Listener JSON_STATUSDC = new Emitter.Listener() {
@@ -243,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject data = (JSONObject) args[0];
                     try {
                         txtDHT11.setText("Nhiệt Độ: " + data.getString("Temperature") + "*C - Độ ẩm: " + data.getString("Humidity") + "%");
+                        txtNhietDoMain.setText("Nhiệt độ: " + data.getString("Temperature") + (char) 186 + "C");
+                        txtDoAmMain.setText("Độ ẩm: " + data.getString("Humidity") + "%");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
