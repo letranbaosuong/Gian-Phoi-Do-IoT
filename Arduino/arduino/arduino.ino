@@ -111,8 +111,8 @@ void GuiTrangThaiDCVoice(int valueRainSensor, int valueCongTac1, int valueCongTa
   root["valueCongTac2"] = valueCongTac2;
   root["voice"] = 1;
 
-  if (millis() - chuky1 > CHU_KY_1_LA_BAO_NHIEU) {
-    chuky1 = millis();
+//  if (millis() - chuky1 > CHU_KY_1_LA_BAO_NHIEU) {
+//    chuky1 = millis();
 
     //Gửi đi hoy!
     //in ra cổng software serial để ESP8266 nhận
@@ -124,7 +124,7 @@ void GuiTrangThaiDCVoice(int valueRainSensor, int valueCongTac1, int valueCongTa
     sCmd.readSerial();
     mySerial.print('\r');
     sCmd.readSerial();
-  }
+//  }
   sCmd.readSerial();
 }
 
@@ -148,8 +148,8 @@ void HeThongTuDong(){
       motor_1_Dung();
       sCmd.readSerial();
 //      _GuiTrangThaiDC();
+      delay(200);
       GuiTrangThaiDC(1, 1, 0);
-      delay(1000);
     } else {
       Serial.println("congTacHanhTrinh2 tat");
       sCmd.readSerial();
@@ -165,8 +165,8 @@ void HeThongTuDong(){
       motor_1_Dung();
       sCmd.readSerial();
 //      _GuiTrangThaiDC();
+      delay(200);
       GuiTrangThaiDC(0, 0, 1);
-      delay(1000);
     } else {
       Serial.println("congTacHanhTrinh1 tat");
       sCmd.readSerial();
@@ -186,18 +186,42 @@ void loop() {
       valueCongTac2 = digitalRead(congTacHanhTrinh2);
       if (kt_lenh_dkDC == 1 && valueCongTac1 == HIGH && valueCongTac2 == LOW){
         motor_1_Dung();
-        if (chuoi_lenh_dkDC == "dayRa"){
+        if (chuoi_lenh_dkDC == "d"){
+          Serial.println("d");
+          delay(10);
           GuiTrangThaiDC(1, 1, 0);
-        } else if (chuoi_lenh_dkDC == "dayRaVoice"){
+//          delay(10);
+//          GuiTrangThaiDC(1, 1, 0);
+//          delay(10);
+//          GuiTrangThaiDC(1, 1, 0);
+        } else if (chuoi_lenh_dkDC == "D"){
+          Serial.println("dv");
+          delay(10);
           GuiTrangThaiDCVoice(1, 1, 0);
+//          delay(10);
+//          GuiTrangThaiDCVoice(1, 1, 0);
+//          delay(10);
+//          GuiTrangThaiDCVoice(1, 1, 0);
         }
         kt_lenh_dkDC = -1;
       } else if (kt_lenh_dkDC == 0 && valueCongTac1 == LOW && valueCongTac2 == HIGH){
         motor_1_Dung();
-        if (chuoi_lenh_dkDC == "thuVao"){
+        if (chuoi_lenh_dkDC == "t"){
+          Serial.println("t");
+          delay(10);
           GuiTrangThaiDC(0, 0, 1);
-        } else if (chuoi_lenh_dkDC == "thuVaoVoice"){
+//          delay(10);
+//          GuiTrangThaiDC(0, 0, 1);
+//          delay(10);
+//          GuiTrangThaiDC(0, 0, 1);
+        } else if (chuoi_lenh_dkDC == "T"){
+          Serial.println("tv");
+          delay(10);
           GuiTrangThaiDCVoice(0, 0, 1);
+//          delay(10);
+//          GuiTrangThaiDCVoice(0, 0, 1);
+//          delay(10);
+//          GuiTrangThaiDCVoice(0, 0, 1);
         }
         kt_lenh_dkDC = -1;
       }
@@ -243,20 +267,20 @@ void allowDKDC() {
 }
 
 void DKDC() {
-//  Serial.println("DKDC");
+  Serial.println("DKDC");
   char *json = sCmd.next(); //Chỉ cần một dòng này để đọc tham số nhận đươc
-//  Serial.println(json);
+  Serial.println(json);
   StaticJsonBuffer<200> jsonBuffer; //tạo Buffer json có khả năng chứa tối đa 200 ký tự
   JsonObject& root = jsonBuffer.parseObject(json);//đặt một biến root mang kiểu json
  
   String lenh_dkDC = root["dieukhienDC"];
   chuoi_lenh_dkDC = lenh_dkDC;
-//  Serial.println(lenh_dkDC);
-  if (lenh_dkDC == "dayRa" || lenh_dkDC == "dayRaVoice"){ // het mua
+  Serial.println(lenh_dkDC);
+  if (lenh_dkDC == "d" || lenh_dkDC == "D"){ // het mua
     motor_1_Tien(MAX_SPEED); // motor 1 tien
     kt_lenh_dkDC = 1;
     Serial.println(kt_lenh_dkDC);
-  } else if (lenh_dkDC == "thuVao" || lenh_dkDC == "thuVaoVoice"){ // dang mua
+  } else if (lenh_dkDC == "t" || lenh_dkDC == "T"){ // dang mua
     motor_1_Lui(MAX_SPEED); // motor 1 lui
     kt_lenh_dkDC = 0;
     Serial.println(kt_lenh_dkDC);

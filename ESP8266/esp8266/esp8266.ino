@@ -30,8 +30,10 @@ SerialCommand sCmd(mySerial); // Khai báo biến sử dụng thư viện Serial
  
 SocketIOClient client;
 
-char host[] = "gianphoidoonline.herokuapp.com";  //Địa chỉ IP dịch vụ, hãy thay đổi nó theo địa chỉ IP Socket server của bạn.
-int port = 80;                  //Cổng dịch vụ socket server do chúng ta tạo!
+//char host[] = "gianphoidoonline.herokuapp.com";  //Địa chỉ IP dịch vụ, hãy thay đổi nó theo địa chỉ IP Socket server của bạn.
+char host[] = "192.168.1.5";  //Địa chỉ IP dịch vụ, hãy thay đổi nó theo địa chỉ IP Socket server của bạn.
+//int port = 80;                  //Cổng dịch vụ socket server do chúng ta tạo!
+int port = 3000;                  //Cổng dịch vụ socket server do chúng ta tạo!
 char namespace_esp8266[] = "esp8266";   //Thêm Arduino!
  
 //từ khóa extern: dùng để #include các biến toàn cục ở một số thư viện khác. Trong thư viện SocketIOClient có hai biến toàn cục

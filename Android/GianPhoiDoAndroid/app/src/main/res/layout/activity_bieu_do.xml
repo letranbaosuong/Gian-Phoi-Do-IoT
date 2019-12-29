@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#A29AAD"
     android:orientation="vertical"
     android:weightSum="10"
     tools:context=".BieuDoActivity">
@@ -13,13 +14,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#6815DD"
-        app:title="DHT11 - Chart">
+        app:title="DHT11 - Chart"
+        app:titleTextColor="#FFFFFF">
 
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".BieuDoActivity">
@@ -28,7 +28,7 @@
             android:id="@+id/txtNhietDo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="Nhiệt độ"
             android:textColor="#C70B0B"
             android:textSize="24sp"
@@ -37,24 +37,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Date"
+            android:textColor="#C70B0B"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtNhietDo" />
+
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphNhietDo"
             android:layout_width="313dp"
             android:layout_height="291dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtNhietDo" />
+            app:layout_constraintTop_toBottomOf="@+id/txtDate" />
 
         <TextView
             android:id="@+id/txtDoAm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="Độ ẩm"
             android:textColor="#086081"
             android:textSize="24sp"

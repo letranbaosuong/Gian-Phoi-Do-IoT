@@ -3,6 +3,7 @@ package com.suong99.gianphoidoandroid;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.animation.AnimatorSet;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,6 +22,11 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionContent;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
+import com.wangjie.rapidfloatingactionbutton.listener.OnRapidFloatingActionListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
     TextView txtDHT11;
     Switch switchDieuKhien;
     Toolbar toolbarMain;
+    RapidFloatingActionButton fabVoice;
 
     {
         try {
-//            mSocket = IO.socket("http://192.168.0.109:3000/");
-            mSocket = IO.socket("https://gianphoidoonline.herokuapp.com/");
+            mSocket = IO.socket("http://192.168.1.5:3000/");
+//            mSocket = IO.socket("https://gianphoidoonline.herokuapp.com/");
         } catch (URISyntaxException e) {
             System.out.println("Loi: '} catch (URISyntaxException e) {' + " + e.toString());
         }
@@ -71,14 +78,14 @@ public class MainActivity extends AppCompatActivity {
         rdDayRa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSocket.emit("android_gui_dieuKhienDC", "dayRa");
+                mSocket.emit("android_gui_dieuKhienDC", "d");
             }
         });
 
         rdThuVao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSocket.emit("android_gui_dieuKhienDC", "thuVao");
+                mSocket.emit("android_gui_dieuKhienDC", "t");
             }
         });
 
@@ -106,6 +113,68 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        fabVoice.setOnRapidFloatingActionListener(new OnRapidFloatingActionListener() {
+            @Override
+            public void onRFABClick() {
+                System.out.println("onRFABClick");
+                //Create an Intent with “RecognizerIntent.ACTION_RECOGNIZE_SPEECH” action//
+
+                {
+                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+                    try {
+
+                        //Start the Activity and wait for the response//
+
+                        startActivityForResult(intent, REQUEST_CODE);
+                    } catch (ActivityNotFoundException a) {
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void toggleContent() {
+
+            }
+
+            @Override
+            public void expandContent() {
+
+            }
+
+            @Override
+            public void collapseContent() {
+
+            }
+
+            @Override
+            public RapidFloatingActionLayout obtainRFALayout() {
+                return null;
+            }
+
+            @Override
+            public RapidFloatingActionButton obtainRFAButton() {
+                return null;
+            }
+
+            @Override
+            public RapidFloatingActionContent obtainRFAContent() {
+                return null;
+            }
+
+            @Override
+            public void onExpandAnimator(AnimatorSet animatorSet) {
+
+            }
+
+            @Override
+            public void onCollapseAnimator(AnimatorSet animatorSet) {
+
+            }
+        });
+
     }
 
     private void AnhXa() {
@@ -116,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
         switchDieuKhien = findViewById(R.id.switchDieuKhien);
         toolbarMain = findViewById(R.id.toolbarMain);
         toolbarMain.inflateMenu(R.menu.menu);
+        fabVoice = findViewById(R.id.fabVoice);
     }
 
     private Emitter.Listener JSON_STATUSDC = new Emitter.Listener() {
@@ -134,22 +204,22 @@ public class MainActivity extends AppCompatActivity {
                         if (valueRainSensor == 1 && valueCongTac1 == 1 && valueCongTac2 == 0 && voice == 0) {
                             rdThuVao.setChecked(false);
                             rdDayRa.setChecked(true);
-                            txtTrangThaiPhoiDo.setText("Đang Phơi Đồ Kìa Anh ơi");
+                            txtTrangThaiPhoiDo.setText("Đang phơi quần áo.");
                             txtTrangThaiPhoiDo.setTextColor(Color.rgb(16, 201, 22));
                         } else if (valueRainSensor == 0 && valueCongTac1 == 0 && valueCongTac2 == 1 && voice == 0) {
-                            txtTrangThaiPhoiDo.setText("Đồ đã lấy vào rồi kìa");
+                            txtTrangThaiPhoiDo.setText("Đã lấy quần áo vào nhà.");
                             txtTrangThaiPhoiDo.setTextColor(Color.RED);
                             rdThuVao.setChecked(true);
                             rdDayRa.setChecked(false);
                         } else if (valueRainSensor == 1 && valueCongTac1 == 1 && valueCongTac2 == 0 && voice == 1) {
                             rdThuVao.setChecked(false);
                             rdDayRa.setChecked(true);
-                            txtTrangThaiPhoiDo.setText("Đang Phơi Đồ Kìa Anh ơi");
+                            txtTrangThaiPhoiDo.setText("Đang phơi quần áo ngoài trời.");
                             txtTrangThaiPhoiDo.setTextColor(Color.rgb(16, 201, 22));
                             mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.phoido);
                             mediaPlayer.start();
                         } else if (valueRainSensor == 0 && valueCongTac1 == 0 && valueCongTac2 == 1 && voice == 1) {
-                            txtTrangThaiPhoiDo.setText("Đồ đã lấy vào rồi kìa");
+                            txtTrangThaiPhoiDo.setText("Đã lấy quần áo vào nhà.");
                             txtTrangThaiPhoiDo.setTextColor(Color.RED);
                             rdThuVao.setChecked(true);
                             rdDayRa.setChecked(false);
@@ -210,10 +280,10 @@ public class MainActivity extends AppCompatActivity {
 
                     if (result.get(0).contains("lấy")) {
                         Toast.makeText(this, result.get(0), Toast.LENGTH_SHORT).show();
-                        mSocket.emit("android_gui_dieuKhienDC", "thuVaoVoice");
+                        mSocket.emit("android_gui_dieuKhienDC", "T");
                     } else if (result.get(0).contains("phơi")) {
                         Toast.makeText(this, result.get(0), Toast.LENGTH_SHORT).show();
-                        mSocket.emit("android_gui_dieuKhienDC", "dayRaVoice");
+                        mSocket.emit("android_gui_dieuKhienDC", "D");
                     }
                 }
                 break;
