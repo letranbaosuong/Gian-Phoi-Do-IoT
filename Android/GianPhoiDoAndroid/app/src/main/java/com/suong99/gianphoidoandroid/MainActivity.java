@@ -24,7 +24,6 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionContent;
-import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
 import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
 import com.wangjie.rapidfloatingactionbutton.listener.OnRapidFloatingActionListener;
 
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     RadioButton rdThuVao;
     RadioButton rdDayRa;
     TextView txtTrangThaiPhoiDo;
-    TextView txtDHT11;
+    TextView txtThongBaoTrangThaiDK;
     Switch switchDieuKhien;
     Toolbar toolbarMain;
     RapidFloatingActionButton fabVoice;
@@ -76,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
         mSocket.connect();
         mSocket.on("server_gui_trang_thai_DC", JSON_STATUSDC);
         mSocket.on("server_gui_DHT11", nhandataDHT11);
+//        mSocket.on("server_gui_STATECT", nhandataSTATECT);
+
+        txtThongBaoTrangThaiDK.setText("Hệ thống tự vận hành.");
+        txtThongBaoTrangThaiDK.setTextColor(Color.rgb(16, 201, 22));
 
         rdDayRa.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,8 +99,12 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mSocket.emit("android_gui_Control", true);
+                    txtThongBaoTrangThaiDK.setText("Bạn có thể điều khiển được!");
+                    txtThongBaoTrangThaiDK.setTextColor(Color.rgb(191, 142, 4));
                 } else {
                     mSocket.emit("android_gui_Control", false);
+                    txtThongBaoTrangThaiDK.setText("Hệ thống tự vận hành.");
+                    txtThongBaoTrangThaiDK.setTextColor(Color.rgb(16, 201, 22));
                 }
             }
         });
@@ -183,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         rdThuVao = findViewById(R.id.rdThuVao);
         rdDayRa = findViewById(R.id.rdDayRa);
         txtTrangThaiPhoiDo = findViewById(R.id.txtTrangThaiPhoiDo);
-        txtDHT11 = findViewById(R.id.txtDHT11);
+        txtThongBaoTrangThaiDK = findViewById(R.id.txtThongBaoTrangThaiDK);
         switchDieuKhien = findViewById(R.id.switchDieuKhien);
         toolbarMain = findViewById(R.id.toolbarMain);
         toolbarMain.inflateMenu(R.menu.menu);
@@ -246,9 +253,33 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
                     try {
-                        txtDHT11.setText("Nhiệt Độ: " + data.getString("Temperature") + "*C - Độ ẩm: " + data.getString("Humidity") + "%");
                         txtNhietDoMain.setText("Nhiệt độ: " + data.getString("Temperature") + (char) 186 + "C");
                         txtDoAmMain.setText("Độ ẩm: " + data.getString("Humidity") + "%");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener nhandataSTATECT = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    try {
+                        boolean stateCT = data.getBoolean("stateCT");
+                        if (stateCT) {
+                            txtThongBaoTrangThaiDK.setText("Bạn có thể điều khiển được!");
+                            txtThongBaoTrangThaiDK.setTextColor(Color.rgb(191, 142, 4));
+                        } else {
+                            txtThongBaoTrangThaiDK.setText("Hệ thống tự vận hành.");
+                            txtThongBaoTrangThaiDK.setTextColor(Color.rgb(16, 201, 22));
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

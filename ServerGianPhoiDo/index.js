@@ -76,6 +76,12 @@ io.on('connection', function(socket) {
 		io.sockets.emit('server_gui_DHT11', data)
 	})
 
+	socket.on('STATECT', function(data){
+		console.log('STATECT: ' + data.stateCT)
+
+		io.sockets.emit('server_gui_STATECT', data)
+	})
+
 	//Khi socket client bị mất kết nối thì chạy hàm sau.
 	socket.on('disconnect', function() {
 		console.log("disconnect : " +socket.id) 	//in ra màn hình console cho vui
